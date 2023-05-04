@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from lithomancy import load_sticks, touching, Stone
+from lithomancy import load_sticks, touching, Stick, Stone
 from svgout import output
 
 DESC = """
@@ -13,17 +13,24 @@ https://esolangs.org/wiki/Sticks_and_Stones
 """
 
 
+def next_stick(current: Stick, sticks: list[Stick], cond):
+    for i, s in enumerate(sticks):
+        if s == current:
+            try:
+                return sticks[i + 1]
+            except IndexError as e:
+                return None
+
+
 def run(sticks, stones, lithomancer=None):
     distance = lambda a,b: abs(((b[0] - a[0])**2 + (b[1] - a[1])**2)**0.5)
     rtouching = lambda a,b: 1 >= distance(a.pos, b.pos) 
     output_primed = False
-    for stick in sticks:
+    stick = sticks[0]
+    while stick:
         if stick.material in 'abc':
             s = stick.material
             stones[s].move(stick.change)
-        #elif stick == '├':
-            # need a better way to store these branches...
-        #    pass
 
         # Output hack:
         if output_primed and rtouching(stones['b'], stones['c']):
@@ -32,6 +39,7 @@ def run(sticks, stones, lithomancer=None):
             output_primed = False
         elif not rtouching(stones['b'], stones['c']):
             output_primed = True
+        stick = next_stick(stick, sticks, touching(stones))
 
 
 def main():

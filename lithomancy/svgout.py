@@ -31,8 +31,8 @@ def output(sticks: list[Stick]) -> svg.SVG:
     for s in sticks:
         elements.append(
            svg.Line(
-                x1=ppu * s.start[0] + WIDTH // 2, x2=ppu * s.end[0] + WIDTH // 2,
-                y1=ppu * s.start[1] + HEIGHT // 2, y2=ppu * s.end[1] + HEIGHT // 2,
+                x1=ppu * s.a[0] + WIDTH // 2, x2=ppu * s.b[0] + WIDTH // 2,
+                y1=ppu * s.a[1] + HEIGHT // 2, y2=ppu * s.b[1] + HEIGHT // 2,
                 stroke=COLORS[s.material],
                 stroke_width=1,
                 marker_end='url(#arrow)',

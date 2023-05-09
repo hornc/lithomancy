@@ -58,6 +58,7 @@ def main():
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('source', help='Input source file')
     parser.add_argument('-d', '--debug', help='debug', action='store_true')
+    parser.add_argument('-a', '--arrows', help='Draw arrows on output SVG', action='store_true')
     parser.add_argument('-p', '--pre', help='Prepend source string (in place of input to adjust stone positions)', action='store_true')
     args = parser.parse_args()
 
@@ -68,7 +69,7 @@ def main():
 
     sticks = load_sticks(args.source)
 
-    source = output(sticks)
+    source = output(sticks, args.arrows)
    
     # Convert source sticks to SVG:
     with open('source.svg', 'w') as f:

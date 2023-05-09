@@ -2,7 +2,36 @@ import svg
 from lithomancy import Stick
 
 
-def output(sticks: list[Stick]) -> svg.SVG:
+def arrow():
+    return svg.Marker(
+        id='arrow',
+        orient='auto-start-reverse',
+        refX=2,
+        refY=2,
+        markerWidth=3,
+        markerHeight=3,
+        elements=[
+            svg.Path(
+                d='M 0 0 L 4 2 L 0 4 z',
+                fill_opacity=0.3
+         )])
+
+def dot():
+    return svg.Marker(
+        id='dot',
+        orient='auto-start-reverse',
+        refX=2,
+        refY=2,
+        markerWidth=3,
+        markerHeight=3,
+        elements=[
+            svg.Circle(
+                cx=2, cy=2, r=1,
+                fill_opacity=0.3
+         )])
+
+
+def output(sticks: list[Stick], arrows: bool = False) -> svg.SVG:
     """
     Generates an SVG representation of the sticks source code.
     The "beach" on which the sticks are laid out.
@@ -10,22 +39,13 @@ def output(sticks: list[Stick]) -> svg.SVG:
     COLORS = {'a': 'magenta', 'b': 'blue', 'c': 'yellow', 'g': 'grey'}
     WIDTH = 500
     HEIGHT = 500
-    ppu=10
+    ppu = 10
     beach = svg.SVG(width=WIDTH, height=HEIGHT)
+    elements = []
+    marker = arrow() if arrows else dot()
     defs = svg.Defs(
-        elements=[
-            svg.Marker(
-                id='arrow',
-                orient='auto-start-reverse',
-                refX=2,
-                refY=2,
-                markerWidth=3,
-                markerHeight=3,
-                elements=[
-                    svg.Path(
-                        d='M 0 0 L 4 2 L 0 4 z',
-                        fill_opacity=0.3, 
-                        )]) ])
+        elements=[marker]
+    )
     elements = [defs, svg.Circle(cx=WIDTH//2, cy=HEIGHT//2, r=1, stroke='red')]
 
     for s in sticks:
@@ -35,7 +55,7 @@ def output(sticks: list[Stick]) -> svg.SVG:
                 y1=ppu * s.a[1] + HEIGHT // 2, y2=ppu * s.b[1] + HEIGHT // 2,
                 stroke=COLORS[s.material],
                 stroke_width=1,
-                marker_end='url(#arrow)',
+                marker_end=f'url(#{marker.id})',
             )
         )
     beach.elements = elements

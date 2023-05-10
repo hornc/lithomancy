@@ -48,7 +48,7 @@ def bounds(sticks: list[Stick], margin: int = 2 * PPU) -> tuple:
     height = PPU * (y_max - y_min) + 2 * margin
 
     # returns width, height, offset
-    return width, height, (-x_min * PPU + margin , y_min * PPU + margin)
+    return width, height, (-x_min * PPU + margin , -y_min * PPU + margin)
 
 
 def output(sticks: list[Stick], arrows: bool = False) -> svg.SVG:

@@ -2,6 +2,9 @@ import svg
 from lithomancy import Stick
 
 
+PPU = 10  # pixels per unit
+
+
 def arrow():
     return svg.Marker(
         id='arrow',
@@ -32,12 +35,20 @@ def dot():
          )])
 
 
-def bounds(sticks: list[Stick]) -> tuple:
-    WIDTH = 500
-    HEIGHT = 500
+def bounds(sticks: list[Stick], margin: int = 2 * PPU) -> tuple:
+    x_max = x_min = sticks[0].a[0]
+    y_max = y_min = sticks[0].a[1]
+
+    for s in sticks:
+        x_max = max(x_max, s.a[0], s.b[0])
+        x_min = min(x_min, s.a[0], s.b[0])
+        y_max = max(y_max, s.a[1], s.b[1])
+        y_min = min(y_min, s.a[1], s.b[1])
+    width = PPU * (x_max - x_min) + 2 * margin
+    height = PPU * (y_max - y_min) + 2 * margin
 
     # returns width, height, offset
-    return WIDTH, HEIGHT, (WIDTH // 2, HEIGHT // 2)
+    return width, height, (-x_min * PPU + margin , y_min * PPU + margin)
 
 
 def output(sticks: list[Stick], arrows: bool = False) -> svg.SVG:
@@ -46,7 +57,7 @@ def output(sticks: list[Stick], arrows: bool = False) -> svg.SVG:
     The "beach" on which the sticks are laid out.
     """
     COLORS = {'a': 'magenta', 'b': 'blue', 'c': 'yellow', 'g': 'grey'}
-    ppu = 10
+
     w, h, offset = bounds(sticks)
     beach = svg.SVG(width=w, height=h)
     elements = []
@@ -59,8 +70,8 @@ def output(sticks: list[Stick], arrows: bool = False) -> svg.SVG:
     for s in sticks:
         elements.append(
            svg.Line(
-                x1=ppu * s.a[0] + offset[0], x2=ppu * s.b[0] + offset[0],
-                y1=ppu * s.a[1] + offset[1], y2=ppu * s.b[1] + offset[1],
+                x1=PPU * s.a[0] + offset[0], x2=PPU * s.b[0] + offset[0],
+                y1=PPU * s.a[1] + offset[1], y2=PPU * s.b[1] + offset[1],
                 stroke=COLORS[s.material],
                 stroke_width=1,
                 marker_end=f'url(#{marker.id})',
